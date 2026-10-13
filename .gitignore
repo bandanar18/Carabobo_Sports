@@ -1,0 +1,9 @@
+node_modules/
+client/dist/
+# Base de datos generada en tiempo de ejecución (se recrea desde initialData.js)
+server/data/db.json
+# Comprobantes subidos por usuarios (se conserva el de muestra)
+server/uploads/*
+!server/uploads/receipt_sample.svg
+*.log
+.DS_Store
