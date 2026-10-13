@@ -14,7 +14,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
     <div className="my-bookings-container container">
       <div className="bookings-page-header">
         <div>
-          <h1>MY BOOKINGS (Mis Reservas)</h1>
+          <h1>MIS RESERVAS (Entradas y Pases Digitales)</h1>
           <p>Gestiona tus entradas, verifica el estado de pago y accede a tus pases digitales con QR.</p>
         </div>
         <button className="btn-primary" onClick={onNavigateToEvents}>
@@ -22,7 +22,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
         </button>
       </div>
 
-      {/* Tabs */}
+      {/* Pestañas de Filtrado */}
       <div className="bookings-tabs-bar">
         <button
           className={`tab-btn ${activeTab === 'ALL' ? 'active' : ''}`}
@@ -44,12 +44,12 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
         </button>
       </div>
 
-      {/* Bookings List */}
+      {/* Listado de Reservas */}
       {filteredBookings.length === 0 ? (
         <div className="empty-bookings-box">
           <Ticket size={40} color="#94A3B8" />
           <h3>No tienes reservas en esta sección</h3>
-          <p>Explora los eventos en vivo o próximos para reservar tus entradas oficiales.</p>
+          <p>Explora los eventos en vivo o próximos para reservar tus entradas oficiales de Carabobo Sports.</p>
           <button className="btn-primary" onClick={onNavigateToEvents}>Ver Eventos Disponibles</button>
         </div>
       ) : (
@@ -65,7 +65,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                   </div>
                 </div>
 
-                {/* Status Badge matching screenshot */}
+                {/* Etiquetas de Estado */}
                 {b.status === 'CONFIRMADO' && (
                   <span className="badge-status confirmed">
                     <CheckCircle2 size={14} /> CONFIRMADO (QR Generado)
@@ -73,7 +73,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                 )}
                 {b.status === 'EN ESPERA' && (
                   <span className="badge-status waiting">
-                    <Clock size={14} /> EN ESPERA (Admin Verificación)
+                    <Clock size={14} /> EN ESPERA (Verificación de Pago)
                   </span>
                 )}
                 {b.status === 'RECHAZADO' && (
@@ -87,9 +87,9 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                 <MapPin size={14} /> {b.venue || 'Forum de Valencia Pérez'}
               </div>
 
-              {/* Order Summary */}
+              {/* Resumen del Pedido */}
               <div className="order-summary-box">
-                <div className="summary-title">TICKET ORDER SUMMARY</div>
+                <div className="summary-title">RESUMEN DEL PEDIDO</div>
                 <div className="summary-line">
                   <span>Entrada ({b.tier}):</span>
                   <span>{b.quantity} x ${b.unitPrice}</span>
@@ -106,7 +106,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                 </div>
               </div>
 
-              {/* Status Specific Footer */}
+              {/* Pie de Tarjeta según Estado */}
               {b.status === 'CONFIRMADO' && (
                 <div className="confirmed-pass-action-box">
                   <div className="pass-preview-info">
@@ -114,7 +114,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                       <QrCode size={32} color="#0B1E36" />
                     </div>
                     <div>
-                      <strong>DIGITAL PASS ACTIVO</strong>
+                      <strong>PASE DIGITAL ACTIVO</strong>
                       <small>Código: {b.bookingCode || `SP-${b.id}`}</small>
                     </div>
                   </div>
@@ -122,7 +122,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                     className="btn-view-pass"
                     onClick={() => onOpenPassModal(b)}
                   >
-                    <Eye size={16} /> VIEWABLE PASS (VER QR)
+                    <Eye size={16} /> VER PASE DIGITAL (QR)
                   </button>
                 </div>
               )}
@@ -131,7 +131,7 @@ export default function MyBookingsView({ bookings, onOpenPassModal, onNavigateTo
                 <div className="waiting-info-box">
                   <AlertCircle size={16} color="#F59E0B" />
                   <span>
-                    El comprobante adjunto está siendo auditado por el equipo de administración. El QR se activará automáticamente al aprobarse.
+                    El comprobante adjunto está siendo auditado por el equipo de administración de Carabobo Sports. El código QR se activará automáticamente al ser aprobado.
                   </span>
                 </div>
               )}

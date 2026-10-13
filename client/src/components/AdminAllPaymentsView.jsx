@@ -43,13 +43,13 @@ export default function AdminAllPaymentsView({ refreshKey, onBackToDashboard, on
       <div className="table-filters-toolbar">
         <div className="filter-select-group">
           <Filter size={16} />
-          <span>Deporte:</span>
+          <span>Filtrar Transacciones por Deporte:</span>
           <select
             value={sportFilter}
             onChange={e => { setSportFilter(e.target.value); setCurrentPage(1); }}
             className="filter-dropdown"
           >
-            <option value="all">Todos Deportes</option>
+            <option value="all">Todos los Deportes</option>
             <option value="basketball">Baloncesto</option>
             <option value="soccer">Fútbol</option>
             <option value="baseball">Béisbol</option>
@@ -91,11 +91,11 @@ export default function AdminAllPaymentsView({ refreshKey, onBackToDashboard, on
               <tr>
                 <th>ID Trans.</th>
                 <th>Fecha/Hora</th>
-                <th>Deporte Pago</th>
+                <th>Deporte</th>
                 <th>Concepto / Evento</th>
-                <th>Cliente / Jugador</th>
+                <th>Cliente / Aficionado</th>
                 <th>Monto ($)</th>
-                <th>Estado Pago</th>
+                <th>Estado del Pago</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -175,7 +175,7 @@ export default function AdminAllPaymentsView({ refreshKey, onBackToDashboard, on
               <div className="receipt-img-frame">
                 {receiptSrc.toLowerCase().endsWith('.pdf')
                   ? <a href={receiptSrc} target="_blank" rel="noreferrer">Abrir comprobante PDF</a>
-                  : <img src={receiptSrc} alt="Comprobante" />}
+                  : <img src={receiptSrc} alt="Comprobante Bancario" />}
               </div>
             </div>
           </div>

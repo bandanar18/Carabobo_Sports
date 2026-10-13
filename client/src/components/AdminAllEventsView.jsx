@@ -51,7 +51,7 @@ export default function AdminAllEventsView({
 
   return (
     <div className="admin-all-events-container container">
-      {/* Header bar */}
+      {/* Barra de Título */}
       <div className="section-title-bar">
         <div>
           <button className="back-link-btn" onClick={onBackToDashboard}>
@@ -66,17 +66,17 @@ export default function AdminAllEventsView({
         </button>
       </div>
 
-      {/* Filters and Search Bar (Screenshot 192057) */}
+      {/* Barra de Filtros y Búsqueda */}
       <div className="table-filters-toolbar">
         <div className="filter-select-group">
           <Filter size={16} />
-          <span>Filtrar Estadísticas por Deporte:</span>
+          <span>Filtrar por Deporte:</span>
           <select
             value={sportFilter}
             onChange={e => { setSportFilter(e.target.value); setCurrentPage(1); }}
             className="filter-dropdown"
           >
-            <option value="all">Todos Deportes</option>
+            <option value="all">Todos los Deportes</option>
             <option value="basketball">Baloncesto</option>
             <option value="soccer">Fútbol</option>
             <option value="baseball">Béisbol</option>
@@ -98,7 +98,7 @@ export default function AdminAllEventsView({
         </div>
       </div>
 
-      {/* Table */}
+      {/* Tabla de Eventos */}
       <div className="events-table-card">
         <div className="table-scroll-wrap">
           <table className="detailed-events-table">
@@ -109,7 +109,7 @@ export default function AdminAllEventsView({
                 <th>Deporte</th>
                 <th>Nombre del Evento</th>
                 <th>Equipos / Competidores</th>
-                <th>Lugar (Venue)</th>
+                <th>Sede (Lugar)</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -160,13 +160,9 @@ export default function AdminAllEventsView({
           </table>
         </div>
 
-        {/* Paginación real sobre los eventos filtrados */}
+        {/* Paginación */}
         <div className="pagination-bar">
-          <button
-            className="page-nav-btn"
-            disabled={page === 1}
-            onClick={() => setCurrentPage(page - 1)}
-          >
+          <button className="page-nav-btn" disabled={page === 1} onClick={() => setCurrentPage(page - 1)}>
             &lt; Anterior
           </button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
@@ -178,11 +174,7 @@ export default function AdminAllEventsView({
               {n}
             </button>
           ))}
-          <button
-            className="page-nav-btn"
-            disabled={page === totalPages}
-            onClick={() => setCurrentPage(page + 1)}
-          >
+          <button className="page-nav-btn" disabled={page === totalPages} onClick={() => setCurrentPage(page + 1)}>
             Siguiente &gt;
           </button>
         </div>

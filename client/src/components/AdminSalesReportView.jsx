@@ -1,11 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Search } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { ArrowLeft, Search, Plus, Download, FileSpreadsheet, Map as MapIcon, Ticket, DollarSign, CalendarCheck, TrendingUp, ArrowUpDown, X } from 'lucide-react';
 import { api } from '../services/api';
+import './AdminSalesReportView.css';
 
-const SPORT_ICONS = {
-  basketball: '🏀', soccer: '⚽', baseball: '⚾', volleyball: '🏐',
-  running: '🏃', swimming: '🏊', tennis: '🎾'
-};
+const SPORTS = [
+  { id: 'all', name: 'Todos', icon: '🏆' },
+  { id: 'basketball', name: 'Baloncesto', icon: '🏀' },
+  { id: 'soccer', name: 'Fútbol', icon: '⚽' },
+  { id: 'baseball', name: 'Béisbol', icon: '⚾' },
+  { id: 'volleyball', name: 'Voleibol', icon: '🏐' },
+  { id: 'running', name: 'Atletismo', icon: '🏃' },
+  { id: 'swimming', name: 'Natación', icon: '🏊' },
+  { id: 'tennis', name: 'Tenis', icon: '🎾' }
+];
+const SPORT_ICONS = Object.fromEntries(SPORTS.map(s => [s.id, s.icon]));
+
+// ponytail: capacidad fija por zona; mover a la sede (venue) si cada recinto tiene aforo distinto
+const CAPACITY = { vip: 500, primeraFila: 1000, normal: 3000 };
+const PAGE_SIZE = 10;
+
+const nf = new Intl.NumberFormat('es-VE', { useGrouping: 'always', maximumFractionDigits: 0 });
+const fmt = n => nf.format(n);
+const pct = (part, total) => (total > 0 ? Math.round((part / total) * 100) : 0);
 
 // Descarga un CSV generado en el navegador (Excel lo abre directamente)
 function downloadCsv(filename, header, rows) {
@@ -19,22 +35,112 @@ function downloadCsv(filename, header, rows) {
   URL.revokeObjectURL(url);
 }
 
-const pct = (sold, total) => (total > 0 ? Math.round((sold / total) * 100) : 0);
+// Número que se anima hasta su valor al cambiar los filtros
+function CountUp({ value, prefix = '' }) {
+  const [shown, setShown] = useState(value);
+  const fromRef = useRef(value);
+  useEffect(() => {
+    const from = fromRef.current;
+    const start = performance.now();
+    let frame;
+    const tick = now => {
+      const t = Math.min(1, (now - start) / 450);
+      const v = from + (value - from) * (1 - Math.pow(1 - t, 3));
+      setShown(v);
+      fromRef.current = v;
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+  return <>{prefix}{fmt(shown)}</>;
+}
+
+function TierBar({ item }) {
+  const total = item.totalSold;
+  if (!total) return <span className="sr-muted">Sin ventas</span>;
+  return (
+    <div className="sr-tierbar" title={`Normal ${item.normalSold} · Primera Fila ${item.primeraFilaSold} · VIP ${item.vipSold}`}>
+      <div className="sr-tierbar-track">
+        <span className="seg normal" style={{ width: `${pct(item.normalSold, total)}%` }} />
+        <span className="seg primera" style={{ width: `${pct(item.primeraFilaSold, total)}%` }} />
+        <span className="seg vip" style={{ width: `${pct(item.vipSold, total)}%` }} />
+      </div>
+      <div className="sr-tierbar-legend">
+        <span><i className="dot normal" />{fmt(item.normalSold)}</span>
+        <span><i className="dot primera" />{fmt(item.primeraFilaSold)}</span>
+        <span><i className="dot vip" />{fmt(item.vipSold)}</span>
+      </div>
+    </div>
+  );
+}
+
+function SortHeader({ k, sort, onSort, className = '', children }) {
+  const active = sort.key === k;
+  return (
+    <th
+      className={`sr-sortable ${className} ${active ? 'active' : ''}`}
+      onClick={() => onSort(k)}
+      aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      {children} <ArrowUpDown size={12} />
+    </th>
+  );
+}
 
 export default function AdminSalesReportView({ onBackToDashboard, onOpenCreateEvent }) {
-  const [sportFilter, setSportFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [report, setReport] = useState({ sales: [], summary: null, pagination: { currentPage: 1, totalPages: 1 } });
-  const [seatMapModal, setSeatMapModal] = useState(null);
+  const [allSales, setAllSales] = useState(null);
+  const [sport, setSport] = useState('all');
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState({ key: 'revenue', dir: 'desc' });
+  const [page, setPage] = useState(1);
+  const [seatMap, setSeatMap] = useState(null);
 
+  // Una sola carga; filtros, orden y paginación se resuelven en memoria (instantáneo)
   useEffect(() => {
-    api.getSalesReport(sportFilter, searchTerm, currentPage)
-      .then(res => res.success && setReport(res))
-      .catch(err => console.error(err));
-  }, [sportFilter, searchTerm, currentPage]);
+    api.getSalesReport('all', '', 1, 500)
+      .then(res => setAllSales(res.success ? res.sales : []))
+      .catch(() => setAllSales([]));
+  }, []);
 
-  const handleDownloadBuyers = async (item) => {
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    const rows = (allSales || []).filter(s =>
+      (sport === 'all' || s.sport === sport) &&
+      (!q || `${s.eventName} ${s.venue} ${s.eventId}`.toLowerCase().includes(q))
+    );
+    const dir = sort.dir === 'asc' ? 1 : -1;
+    return rows.sort((a, b) => {
+      const x = a[sort.key], y = b[sort.key];
+      return (typeof x === 'string' ? x.localeCompare(y) : x - y) * dir;
+    });
+  }, [allSales, sport, search, sort]);
+
+  const summary = useMemo(() => {
+    const sold = filtered.reduce((s, x) => s + x.totalSold, 0);
+    const revenue = filtered.reduce((s, x) => s + x.revenue, 0);
+    return { sold, revenue, withSales: filtered.filter(x => x.totalSold > 0).length, avg: sold ? revenue / sold : 0 };
+  }, [filtered]);
+
+  const sportCounts = useMemo(() => {
+    const counts = { all: (allSales || []).length };
+    (allSales || []).forEach(s => { counts[s.sport] = (counts[s.sport] || 0) + 1; });
+    return counts;
+  }, [allSales]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const maxRevenue = Math.max(1, ...filtered.map(s => s.revenue));
+
+  const toggleSort = key => {
+    // Textos empiezan A→Z, números de mayor a menor; el segundo clic invierte
+    const firstDir = ['eventName', 'eventDateTime'].includes(key) ? 'asc' : 'desc';
+    setSort(s => ({ key, dir: s.key === key ? (s.dir === 'asc' ? 'desc' : 'asc') : firstDir }));
+    setPage(1);
+  };
+
+  const handleDownloadBuyers = async item => {
     const res = await api.getEventBuyers(item.eventId);
     if (!res.success) return alert(res.message);
     if (res.buyers.length === 0) return alert('Este evento aún no tiene compradores con pago confirmado.');
@@ -45,119 +151,139 @@ export default function AdminSalesReportView({ onBackToDashboard, onOpenCreateEv
     );
   };
 
-  const handleGlobalReport = async () => {
-    const res = await api.getSalesReport(sportFilter, searchTerm, 1, 500);
-    if (!res.success) return alert(res.message);
-    downloadCsv(
-      'reporte-global-ingresos.csv',
-      ['ID Evento', 'Deporte', 'Evento', 'Fecha/Hora', 'Sede', 'Normal', 'Primera Fila', 'VIP', 'Total Vendidas', 'Recaudación ($)', 'Estado'],
-      res.sales.map(s => [s.eventId, s.sport, s.eventName, s.eventDateTime, s.venue, s.normalSold, s.primeraFilaSold, s.vipSold, s.totalSold, s.revenue, s.status])
-    );
-  };
+  const handleGlobalReport = () => downloadCsv(
+    'reporte-global-ingresos.csv',
+    ['ID Evento', 'Deporte', 'Evento', 'Fecha/Hora', 'Sede', 'Normal', 'Primera Fila', 'VIP', 'Total Vendidas', 'Recaudación ($)', 'Estado'],
+    filtered.map(s => [s.eventId, s.sport, s.eventName, s.eventDateTime, s.venue, s.normalSold, s.primeraFilaSold, s.vipSold, s.totalSold, s.revenue, s.status])
+  );
 
-  const { sales, summary, pagination } = report;
+  const kpis = [
+    { label: 'Entradas vendidas', value: summary.sold, icon: Ticket, tone: 'orange' },
+    { label: 'Recaudación total', value: summary.revenue, prefix: '$', icon: DollarSign, tone: 'green' },
+    { label: 'Eventos con ventas', value: summary.withSales, icon: CalendarCheck, tone: 'blue' },
+    { label: 'Ingreso por entrada', value: summary.avg, prefix: '$', icon: TrendingUp, tone: 'purple' }
+  ];
 
   return (
-    <div className="admin-sales-report-container container">
-      {/* Header Bar */}
-      <div className="sales-top-header">
+    <div className="sr-page container">
+      <button className="sr-back" onClick={onBackToDashboard}>
+        <ArrowLeft size={16} /> Volver al Resumen Ejecutivo
+      </button>
+
+      <header className="sr-header">
         <div>
-          <button className="back-link-btn" onClick={onBackToDashboard}>
-            <ArrowLeft size={16} /> Volver al Resumen Ejecutivo
-          </button>
-          <h1>Listado Detallado de Ventas por Evento</h1>
-          <p className="sales-period-sub">
-            Desglosado por tipo de entrada | Total Entradas Vendidas: <strong>{(summary?.totalSold ?? 0).toLocaleString()}</strong> | Total Recaudado: <strong>${(summary?.totalRevenue ?? 0).toLocaleString()}</strong> | Eventos con ventas: <strong>{summary?.totalEventsWithSales ?? 0}</strong>
-          </p>
+          <span className="sr-eyebrow">Reportes · Ventas</span>
+          <h1>Ventas por Evento</h1>
+          <p>Desglose por tipo de entrada, ocupación y recaudación en tiempo real.</p>
         </div>
-
-        <div className="sales-top-actions">
-          <button className="btn-primary" onClick={onOpenCreateEvent}>
-            + Crear Nuevo Evento
+        <div className="sr-header-actions">
+          <button className="sr-btn ghost" onClick={handleGlobalReport} disabled={!filtered.length}>
+            <FileSpreadsheet size={16} /> Exportar CSV
           </button>
-          <button className="btn-secondary" onClick={handleGlobalReport}>
-            Reporte Global de Ingresos (CSV)
+          <button className="sr-btn primary" onClick={onOpenCreateEvent}>
+            <Plus size={16} /> Nuevo Evento
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* Filter Toolbar */}
-      <div className="sales-filter-bar">
-        <div className="filter-item">
-          <span>Filtrar Ventas por Deporte:</span>
-          <select
-            value={sportFilter}
-            onChange={e => { setSportFilter(e.target.value); setCurrentPage(1); }}
-            className="sales-dropdown"
-          >
-            <option value="all">Todos Deportes</option>
-            <option value="basketball">Baloncesto</option>
-            <option value="soccer">Fútbol</option>
-            <option value="baseball">Béisbol</option>
-            <option value="volleyball">Voleibol</option>
-            <option value="running">Maratón / Atletismo</option>
-            <option value="swimming">Natación</option>
-            <option value="tennis">Tenis</option>
-          </select>
+      <section className="sr-kpis">
+        {kpis.map(({ label, value, prefix, icon: Icon, tone }) => (
+          <div key={label} className={`sr-kpi ${tone}`}>
+            <div className="sr-kpi-icon"><Icon size={20} /></div>
+            <div>
+              <span className="sr-kpi-label">{label}</span>
+              <strong className="sr-kpi-value">{allSales ? <CountUp value={value} prefix={prefix} /> : '—'}</strong>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <section className="sr-toolbar">
+        <div className="sr-chips" role="tablist" aria-label="Filtrar por deporte">
+          {SPORTS.filter(s => s.id === 'all' || sportCounts[s.id]).map(s => (
+            <button
+              key={s.id}
+              role="tab"
+              aria-selected={sport === s.id}
+              className={`sr-chip ${sport === s.id ? 'active' : ''}`}
+              onClick={() => { setSport(s.id); setPage(1); }}
+            >
+              <span>{s.icon}</span> {s.name}
+              <em>{sportCounts[s.id] || 0}</em>
+            </button>
+          ))}
         </div>
-
-        <div className="search-input-group">
+        <label className="sr-search">
           <Search size={16} />
           <input
-            type="text"
-            placeholder="Buscar por evento, equipo o sede..."
-            value={searchTerm}
-            onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+            type="search"
+            placeholder="Buscar evento, sede o ID…"
+            value={search}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
           />
-        </div>
-      </div>
+          {search && <button type="button" aria-label="Limpiar búsqueda" onClick={() => setSearch('')}><X size={14} /></button>}
+        </label>
+      </section>
 
-      {/* Sales Table */}
-      <div className="sales-table-card">
-        <div className="table-scroll-wrap">
-          <table className="sales-table">
+      <section className="sr-card">
+        <div className="sr-legend">
+          <span><i className="dot normal" /> Normal</span>
+          <span><i className="dot primera" /> Primera Fila</span>
+          <span><i className="dot vip" /> VIP</span>
+          <span className="sr-count">{filtered.length} evento{filtered.length === 1 ? '' : 's'}</span>
+        </div>
+
+        <div className="sr-table-wrap">
+          <table className="sr-table">
             <thead>
               <tr>
-                <th>ID Evento</th>
-                <th>Deporte</th>
-                <th>Nombre del Evento</th>
-                <th>Fecha/Hora Evento</th>
-                <th>Total Vendidas (Cant.)</th>
-                <th>Entradas Normales (Cant.)</th>
-                <th>Entradas Primera Fila (Cant.)</th>
-                <th>Entradas VIP (Cant.)</th>
-                <th>Recaudación Total</th>
-                <th>Acciones</th>
+                <SortHeader k="eventName" sort={sort} onSort={toggleSort}>Evento</SortHeader>
+                <SortHeader k="eventDateTime" sort={sort} onSort={toggleSort} className="hide-sm">Fecha</SortHeader>
+                <SortHeader k="totalSold" sort={sort} onSort={toggleSort} className="num">Vendidas</SortHeader>
+                <th className="hide-md">Distribución por entrada</th>
+                <SortHeader k="revenue" sort={sort} onSort={toggleSort} className="num">Recaudación</SortHeader>
+                <th className="actions">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {sales.length === 0 && (
-                <tr><td colSpan={10} style={{ textAlign: 'center' }}>No hay eventos que coincidan con el filtro.</td></tr>
+              {!allSales && Array.from({ length: 5 }, (_, i) => (
+                <tr key={i} className="sr-skeleton"><td colSpan={6}><span /></td></tr>
+              ))}
+              {allSales && pageRows.length === 0 && (
+                <tr><td colSpan={6} className="sr-empty">No hay eventos que coincidan con los filtros.</td></tr>
               )}
-              {sales.map(item => (
+              {pageRows.map(item => (
                 <tr key={item.eventId}>
-                  <td><strong>{item.eventId}</strong></td>
-                  <td><span className="sport-icon-cell" title={item.sport}>{SPORT_ICONS[item.sport] || '🏆'}</span></td>
-                  <td><strong>{item.eventName}</strong></td>
-                  <td>{item.eventDateTime}</td>
-                  <td><span className="badge-qty total">{item.totalSold.toLocaleString()}</span></td>
-                  <td><span className="badge-qty normal">{item.normalSold}</span></td>
-                  <td><span className="badge-qty primera">{item.primeraFilaSold}</span></td>
-                  <td><span className="badge-qty vip">{item.vipSold}</span></td>
                   <td>
-                    <strong className={item.status === 'Cancelado' ? 'rev-cancelled' : 'rev-amount'}>
-                      {item.status === 'Cancelado' ? 'Cancelado' : `$${item.revenue.toLocaleString()}`}
-                    </strong>
-                  </td>
-                  <td>
-                    <div className="sales-action-btns">
-                      <button className="btn-sale-action" onClick={() => setSeatMapModal(item)}>
-                        Ver Mapa Asientos
-                      </button>
-                      <button className="btn-sale-action" onClick={() => handleDownloadBuyers(item)}>
-                        Descargar Listado Compradores
-                      </button>
+                    <div className="sr-event">
+                      <span className="sr-event-icon">{SPORT_ICONS[item.sport] || '🏆'}</span>
+                      <div>
+                        <strong>{item.eventName}</strong>
+                        <small>#{item.eventId} · {item.venue}</small>
+                      </div>
+                      {item.status !== 'Programado' && (
+                        <span className={`status-pill ${item.status.toLowerCase().replace(/\s+/g, '-')}`}>{item.status}</span>
+                      )}
                     </div>
+                  </td>
+                  <td className="hide-sm sr-date">{item.eventDateTime}</td>
+                  <td className="num"><strong>{fmt(item.totalSold)}</strong></td>
+                  <td className="hide-md"><TierBar item={item} /></td>
+                  <td className="num">
+                    {item.status === 'Cancelado' ? <span className="sr-cancelled">Cancelado</span> : (
+                      <div className="sr-revenue">
+                        <strong>${fmt(item.revenue)}</strong>
+                        <span className="sr-revenue-bar"><span style={{ width: `${pct(item.revenue, maxRevenue)}%` }} /></span>
+                      </div>
+                    )}
+                  </td>
+                  <td className="actions">
+                    <button className="sr-icon-btn" title="Ver mapa de asientos" aria-label="Ver mapa de asientos" onClick={() => setSeatMap(item)}>
+                      <MapIcon size={16} />
+                    </button>
+                    <button className="sr-icon-btn" title="Descargar compradores (CSV)" aria-label="Descargar compradores" onClick={() => handleDownloadBuyers(item)}>
+                      <Download size={16} />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -165,58 +291,44 @@ export default function AdminSalesReportView({ onBackToDashboard, onOpenCreateEv
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="pagination-bar">
-          <button
-            className="page-nav-btn"
-            disabled={pagination.currentPage <= 1}
-            onClick={() => setCurrentPage(pagination.currentPage - 1)}
-          >
-            &lt; Anterior
-          </button>
-          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map(n => (
-            <button
-              key={n}
-              className={`page-num-btn ${pagination.currentPage === n ? 'active' : ''}`}
-              onClick={() => setCurrentPage(n)}
-            >
-              {n}
-            </button>
-          ))}
-          <button
-            className="page-nav-btn"
-            disabled={pagination.currentPage >= pagination.totalPages}
-            onClick={() => setCurrentPage(pagination.currentPage + 1)}
-          >
-            Siguiente &gt;
-          </button>
-        </div>
-      </div>
+        {totalPages > 1 && (
+          <div className="sr-pagination">
+            <button disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)} aria-label="Página anterior">‹</button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <button key={n} className={n === currentPage ? 'active' : ''} onClick={() => setPage(n)}>{n}</button>
+            ))}
+            <button disabled={currentPage === totalPages} onClick={() => setPage(currentPage + 1)} aria-label="Página siguiente">›</button>
+          </div>
+        )}
+      </section>
 
-      {/* Seat Map Modal: ocupación calculada sobre la capacidad por zona */}
-      {seatMapModal && (
-        <div className="modal-backdrop">
-          <div className="seat-map-modal-card">
-            <div className="modal-top-bar">
-              <h3>Mapa de Asientos & Tiers: {seatMapModal.eventName}</h3>
-              <button className="close-btn-circle" onClick={() => setSeatMapModal(null)}>×</button>
+      {seatMap && (
+        <div className="modal-backdrop" onClick={() => setSeatMap(null)}>
+          <div className="sr-modal" onClick={e => e.stopPropagation()} role="dialog" aria-label="Mapa de asientos">
+            <div className="sr-modal-head">
+              <div>
+                <span className="sr-eyebrow">Mapa de asientos</span>
+                <h3>{seatMap.eventName}</h3>
+              </div>
+              <button className="sr-icon-btn" aria-label="Cerrar" onClick={() => setSeatMap(null)}><X size={18} /></button>
             </div>
-            {/* ponytail: capacidad fija por zona; mover a la sede (venue) si cada recinto tiene aforo distinto */}
-            <div className="stadium-layout-visual">
-              <div className="stage-court-box">CAMPO / PISTA DE JUEGO</div>
-              <div className="tier-zone vip-zone">
-                <span>ZONA VIP ({seatMapModal.vipSold} / 500 Asientos)</span>
-                <small>Ocupación: {pct(seatMapModal.vipSold, 500)}%</small>
-              </div>
-              <div className="tier-zone primera-zone">
-                <span>ZONA PRIMERA FILA ({seatMapModal.primeraFilaSold} / 1,000 Asientos)</span>
-                <small>Ocupación: {pct(seatMapModal.primeraFilaSold, 1000)}%</small>
-              </div>
-              <div className="tier-zone normal-zone">
-                <span>GRADERÍAS GENERALES ({seatMapModal.normalSold} / 3,000 Asientos)</span>
-                <small>Ocupación: {pct(seatMapModal.normalSold, 3000)}%</small>
-              </div>
-            </div>
+            <div className="sr-court">CAMPO / PISTA DE JUEGO</div>
+            {[
+              { key: 'vip', label: 'Zona VIP', sold: seatMap.vipSold },
+              { key: 'primeraFila', label: 'Primera Fila', sold: seatMap.primeraFilaSold },
+              { key: 'normal', label: 'Graderías Generales', sold: seatMap.normalSold }
+            ].map(z => {
+              const occ = pct(z.sold, CAPACITY[z.key]);
+              return (
+                <div key={z.key} className={`sr-zone ${z.key}`}>
+                  <div className="sr-zone-row">
+                    <strong>{z.label}</strong>
+                    <span>{fmt(z.sold)} / {fmt(CAPACITY[z.key])} · <b>{occ}%</b></span>
+                  </div>
+                  <div className="sr-zone-track"><span style={{ width: `${Math.min(occ, 100)}%` }} /></div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

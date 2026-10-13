@@ -5,7 +5,7 @@ import WhistleLogo from './WhistleLogo';
 export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEventForDetails, featuredEvents }) {
   return (
     <div className="landing-page-wrapper">
-      {/* Hero Banner Section */}
+      {/* Sección Hero */}
       <section className="hero-section">
         <div className="hero-overlay"></div>
         <div className="hero-content">
@@ -15,32 +15,32 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
           </div>
           
           <h1 className="hero-title">
-            COMPETE. FOLLOW. ACHIEVE.
+            COMPITE. SIGUE. ALCANZA.
           </h1>
           <p className="hero-subtitle">
-            Your Central Hub for All Local Sports Events.
+            Tu centro unificado para todos los torneos y eventos deportivos de Carabobo.
           </p>
 
           <div className="hero-actions">
             <button className="btn-primary-hero" onClick={() => onOpenAuth('register')}>
-              SIGN UP NOW
+              REGÍSTRATE AHORA
             </button>
             <button className="btn-secondary-hero" onClick={onNavigateToEvents}>
-              VIEW UPCOMING EVENTS
+              VER PRÓXIMOS EVENTOS
               <ArrowRight size={18} />
             </button>
           </div>
         </div>
 
-        {/* Dynamic Sports Banner Graphic */}
+        {/* Decoración gráfica */}
         <div className="hero-decor-stripes"></div>
       </section>
 
-      {/* Featured Tournaments & Latest Results Row */}
+      {/* Torneos Destacados y Últimos Resultados */}
       <section className="featured-results-section container">
         <div className="featured-left">
           <div className="section-header-compact">
-            <h2>Featured Tournaments</h2>
+            <h2>Torneos Destacados</h2>
             <button className="link-action" onClick={onNavigateToEvents}>Ver Todos</button>
           </div>
 
@@ -55,12 +55,12 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
               </div>
               <div className="tournament-card-body">
                 <h3>Torneo Máster Forum Valencia</h3>
-                <p>Las mejores franquicias de baloncesto compitiendo por la copa estatal.</p>
+                <p>Las mejores franquicias de baloncesto compitiendo por la copa estatal en Carabobo.</p>
                 <button
                   className="btn-card-action"
                   onClick={() => onSelectEventForDetails(1)}
                 >
-                  SIGN UP NOW / VER DETALLES
+                  VER DETALLES Y ENTRADAS
                 </button>
               </div>
             </div>
@@ -75,23 +75,23 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
               </div>
               <div className="tournament-card-body">
                 <h3>Copa Carabobo Misael Delgado</h3>
-                <p>Encuentro regional de fútbol sala y campo con transmisión en vivo.</p>
+                <p>Encuentro regional de fútbol sala y campo con transmisión de resultados en vivo.</p>
                 <button
                   className="btn-card-action"
                   onClick={() => onSelectEventForDetails(3)}
                 >
-                  SIGN UP NOW / VER DETALLES
+                  VER DETALLES Y ENTRADAS
                 </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Latest Results Box */}
+        {/* Panel de Últimos Resultados */}
         <div className="latest-results-panel">
           <div className="section-header-compact">
-            <h2>Latest Results</h2>
-            <button className="link-action" onClick={onNavigateToEvents}>View More &gt;</button>
+            <h2>Últimos Resultados</h2>
+            <button className="link-action" onClick={onNavigateToEvents}>Ver Más &gt;</button>
           </div>
 
           <div className="results-list">
@@ -147,19 +147,19 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
           <div className="banner-ad-box">
             <Ticket size={24} color="#F36F21" />
             <div>
-              <p><strong>¿Deseas asistir a los partidos?</strong></p>
-              <small>Reserva tus entradas con QR y paga por transferencia o pago móvil.</small>
+              <p><strong>¿Deseas asistir a los eventos?</strong></p>
+              <small>Reserva tus entradas con QR y paga por transferencia bancaria o pago móvil.</small>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
+      {/* Sección Cómo Funciona */}
       <section className="how-it-works-section">
         <div className="container">
           <div className="how-header">
-            <h2>How It Works</h2>
-            <p>Your Central Hub for All Local Sports Events.</p>
+            <h2>Cómo Funciona</h2>
+            <p>Tu centro unificado para todos los torneos y disciplinas deportivas de Carabobo.</p>
           </div>
 
           <div className="how-grid">
@@ -169,7 +169,7 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
               </div>
               <h3>Conéctate con el Deporte</h3>
               <p>
-                Descubre el calendario unificado de torneos, campeonatos y copas deportivas en todo Carabobo.
+                Descubre el calendario unificado de torneos, campeonatos y copas deportivas en todo el estado Carabobo.
               </p>
             </div>
 
@@ -179,7 +179,7 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
               </div>
               <h3>Sigue el Marcador en Vivo</h3>
               <p>
-                Sigue jugada a jugada las estadísticas de tus equipos favoritos, goles, puntos y faltas en tiempo real.
+                Consulta jugada a jugada las estadísticas de tus equipos favoritos, goles, puntos y faltas en tiempo real.
               </p>
             </div>
 
@@ -189,7 +189,7 @@ export default function LandingView({ onNavigateToEvents, onOpenAuth, onSelectEv
               </div>
               <h3>Pase Digital Instantáneo</h3>
               <p>
-                Reserva tus entradas, adjunta tu comprobante y recibe tu pase digital con código QR para ingreso seguro.
+                Reserva tus entradas, adjunta tu comprobante de pago y recibe tu pase digital con código QR para ingreso seguro.
               </p>
             </div>
           </div>

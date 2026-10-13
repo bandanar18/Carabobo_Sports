@@ -11,7 +11,7 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
   const [previewUrl, setPreviewUrl] = useState('/uploads/receipt_sample.svg');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Price calculations
+  // Cálculos de precios
   const unitPrice = selectedTier === 'VIP'
     ? (event.prices?.vip || 100)
     : selectedTier === 'Primera Fila'
@@ -55,11 +55,10 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
   return (
     <div className="modal-backdrop">
       <div className="book-ticket-modal-card">
-        {/* Modal Top Header */}
+        {/* Cabecera del Modal */}
         <div className="modal-top-bar">
           <div className="modal-brand-col">
-            <WhistleLogo size={26} />
-            <span className="brand-sub">CaraboboSports</span>
+            <WhistleLogo size={26} customText="Carabobo Sports" />
           </div>
           <button className="close-btn-circle" onClick={onClose}>
             <X size={18} />
@@ -67,20 +66,20 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
         </div>
 
         <form onSubmit={handleSubmit} className="book-ticket-form">
-          {/* EVENT DETAILS CARD */}
+          {/* DETALLES DEL EVENTO */}
           <div className="booking-event-header-box">
-            <span className="sub-tag">EVENT DETAILS</span>
+            <span className="sub-tag">DETALLES DEL EVENTO</span>
             <h3>{event.teamA} vs {event.teamB}</h3>
-            <p className="event-sport-type">{event.sport.toUpperCase()} MATCH</p>
+            <p className="event-sport-type">PARTIDO OFICIAL ({event.sport.toUpperCase()})</p>
             <div className="event-date-row">
               <small>Fecha: {event.date} • {event.time}</small>
               <small>Sede: {event.venue}</small>
             </div>
           </div>
 
-          {/* SELECT TICKET TYPE */}
+          {/* SELECCIONAR TIPO DE ENTRADA */}
           <div className="form-group-block">
-            <label className="section-label">SELECT TICKET TYPE</label>
+            <label className="section-label">SELECCIONAR TIPO DE ENTRADA</label>
             <div className="ticket-tiers-grid">
               <button
                 type="button"
@@ -88,7 +87,7 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
                 onClick={() => setSelectedTier('Normal')}
               >
                 <div className="tier-name">Normal</div>
-                <div className="tier-tag-sub">Opciones</div>
+                <div className="tier-tag-sub">General</div>
                 <div className="tier-price">${event.prices?.normal || 25}</div>
               </button>
 
@@ -114,9 +113,9 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
             </div>
           </div>
 
-          {/* QUANTITY */}
+          {/* CANTIDAD */}
           <div className="form-group-block">
-            <label className="section-label">QUANTITY (CANTIDAD)</label>
+            <label className="section-label">CANTIDAD DE ENTRADAS</label>
             <select
               className="custom-select-input"
               value={quantity}
@@ -128,10 +127,10 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
             </select>
           </div>
 
-          {/* UPLOAD PAYMENT RECEIPT */}
+          {/* SUBIR COMPROBANTE DE PAGO */}
           <div className="form-group-block">
             <div className="label-with-badge">
-              <label className="section-label">UPLOAD PAYMENT RECEIPT</label>
+              <label className="section-label">SUBIR COMPROBANTE DE PAGO</label>
               <span className="secure-badge"><Lock size={12} /> Verificación Segura</span>
             </div>
 
@@ -145,14 +144,14 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
               />
               <label htmlFor="receiptFileInput" className="upload-dropzone">
                 <Upload size={22} color="#F36F21" />
-                <span>{receiptFile ? receiptFile.name : 'Subir Comprobante (Haga clic o arrastre)'}</span>
+                <span>{receiptFile ? receiptFile.name : 'Subir Comprobante (Haga clic o arrastre el archivo)'}</span>
                 <small>Formatos: JPG, PNG, PDF (Comprobante Banesco, Pago Móvil, etc.)</small>
               </label>
 
               {previewUrl && (
                 <div className="receipt-preview-pill">
                   <FileText size={16} />
-                  <span>Comprobante listo: {receiptFile ? receiptFile.name : 'Recibo oficial Banesco (Demo cargado)'}</span>
+                  <span>Comprobante listo: {receiptFile ? receiptFile.name : 'Recibo oficial Banesco (Demo precargado)'}</span>
                   <Check size={16} color="#10B981" />
                 </div>
               )}
@@ -162,7 +161,7 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
           {/* DETALLES DEL PAGO ADICIONAL */}
           <div className="form-group-block">
             <label className="section-label">DETALLES DEL PAGO ADICIONAL</label>
-            <small className="label-instruction">(Explica cómo pagarás el resto / Número de referencia)</small>
+            <small className="label-instruction">(Explica cómo pagarás el resto / Número de referencia bancaria)</small>
             <textarea
               className="custom-textarea"
               rows={2}
@@ -173,25 +172,25 @@ export default function BookTicketModal({ event, onClose, onSubmitBooking }) {
             ></textarea>
           </div>
 
-          {/* SUMMARY & TOTAL */}
+          {/* RESUMEN DE PAGO */}
           <div className="booking-summary-receipt">
             <div className="receipt-line">
-              <span>SUMMARY (Subtotal):</span>
+              <span>Subtotal:</span>
               <span>${subtotal}.00</span>
             </div>
             <div className="receipt-line total-highlight">
-              <span>TOTAL:</span>
+              <span>TOTAL A PAGAR:</span>
               <strong>${total}.00</strong>
             </div>
           </div>
 
-          {/* SUBMIT BUTTON */}
+          {/* BOTÓN DE ENVÍO */}
           <button
             type="submit"
             className="btn-submit-reservation"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'PROCESANDO RESERVA...' : 'SUBMIT RESERVATION'}
+            {isSubmitting ? 'PROCESANDO RESERVA...' : 'ENVIAR RESERVA'}
           </button>
         </form>
       </div>

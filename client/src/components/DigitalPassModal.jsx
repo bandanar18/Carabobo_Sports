@@ -6,7 +6,7 @@ import WhistleLogo from './WhistleLogo';
 export default function DigitalPassModal({ booking, onClose }) {
   if (!booking) return null;
 
-  const qrValue = booking.qrToken || `SPORTFLOW-PASS-${booking.id}-${booking.tier}-${booking.bookingCode || '2026'}`;
+  const qrValue = booking.qrToken || `CARABOBOSPORTS-PASS-${booking.id}-${booking.tier}-${booking.bookingCode || '2026'}`;
 
   return (
     <div className="modal-backdrop">
@@ -15,13 +15,13 @@ export default function DigitalPassModal({ booking, onClose }) {
           <X size={20} />
         </button>
 
-        {/* Stadium Ticket Styling */}
+        {/* Diseño de Boleto Oficial de Estadio */}
         <div className="ticket-pass-container">
-          {/* Ticket Header */}
+          {/* Cabecera del Boleto */}
           <div className="ticket-header-navy">
             <div className="ticket-brand-row">
-              <WhistleLogo size={24} />
-              <span className="ticket-seal"><Shield size={14} /> OFICIAL CARABOBOSPORTS</span>
+              <WhistleLogo size={24} customText="Carabobo Sports" />
+              <span className="ticket-seal"><Shield size={14} /> OFICIAL CARABOBO SPORTS</span>
             </div>
             <div className="ticket-event-hero">
               <h2>{booking.eventName}</h2>
@@ -29,14 +29,14 @@ export default function DigitalPassModal({ booking, onClose }) {
             </div>
           </div>
 
-          {/* Ticket Stub Notch */}
+          {/* Ranura de Corte / Cupón */}
           <div className="ticket-notch-row">
             <div className="notch left"></div>
             <div className="notch-line"></div>
             <div className="notch right"></div>
           </div>
 
-          {/* Ticket Details Body */}
+          {/* Cuerpo con Detalles */}
           <div className="ticket-body">
             <div className="ticket-info-grid">
               <div className="info-cell">
@@ -48,7 +48,7 @@ export default function DigitalPassModal({ booking, onClose }) {
                 <strong>{booking.eventTime || '12:00 PM'}</strong>
               </div>
               <div className="info-cell">
-                <small>NIVEL / TIER</small>
+                <small>NIVEL / ZONA</small>
                 <span className="tier-badge-pill">{booking.tier}</span>
               </div>
               <div className="info-cell">
@@ -61,7 +61,7 @@ export default function DigitalPassModal({ booking, onClose }) {
               </div>
             </div>
 
-            {/* Live QR Code Box */}
+            {/* Código QR Interactivo */}
             <div className="ticket-qr-display-area">
               <div className="qr-box-bordered">
                 <QRCodeSVG
@@ -76,12 +76,12 @@ export default function DigitalPassModal({ booking, onClose }) {
                   <CheckCircle size={14} /> ENTRADA VÁLIDA
                 </span>
                 <span className="code-text-mono">{booking.bookingCode || `SP-${booking.id}`}</span>
-                <small>Escanee este código en los torniquetes de acceso del estadio.</small>
+                <small>Escanee este código QR en los torniquetes de acceso del recinto deportivo.</small>
               </div>
             </div>
           </div>
 
-          {/* Ticket Action Footer */}
+          {/* Botones de Acción */}
           <div className="ticket-footer-actions">
             <button
               className="btn-print"

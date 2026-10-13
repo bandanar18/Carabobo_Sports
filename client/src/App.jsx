@@ -326,7 +326,7 @@ export default function App() {
             }
           }}
         >
-          {isAdmin ? '🔄 Cambiar a Vista Usuario' : '🛡️ Cambiar a Vista Admin'}
+          {isAdmin ? '🔄 Cambiar a Vista Aficionado' : '🛡️ Cambiar a Vista Administrador'}
         </button>
       </div>
 

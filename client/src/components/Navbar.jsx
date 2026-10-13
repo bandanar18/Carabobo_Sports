@@ -20,8 +20,8 @@ export default function Navbar({
     <header className="navbar-container">
       <div className="navbar-left">
         <div className="navbar-brand" onClick={() => setCurrentView('landing')} style={{ cursor: 'pointer' }}>
-          <WhistleLogo size={32} />
-          <span className="brand-subtag">CaraboboSports</span>
+          <WhistleLogo size={32} customText="Carabobo Sports" />
+          <span className="brand-subtag">Oficial</span>
         </div>
 
         <nav className="navbar-links">
@@ -35,7 +35,7 @@ export default function Navbar({
             className={`nav-link ${currentView === 'events' ? 'active' : ''}`}
             onClick={() => setCurrentView('events')}
           >
-            Eventos & En Vivo
+            Eventos y En Vivo
           </button>
           <button
             className={`nav-link ${currentView === 'my-bookings' ? 'active' : ''}`}
@@ -55,7 +55,7 @@ export default function Navbar({
       </div>
 
       <div className="navbar-right">
-        {/* Search */}
+        {/* Búsqueda */}
         <div className="nav-search-box">
           <Search size={16} className="search-icon" />
           <input
@@ -65,7 +65,7 @@ export default function Navbar({
           />
         </div>
 
-        {/* Notifications */}
+        {/* Notificaciones */}
         <button
           className="icon-btn"
           title="Notificaciones"
@@ -95,7 +95,7 @@ export default function Navbar({
           </div>
         )}
 
-        {/* Demo Switcher & User Profile */}
+        {/* Conmutador de Demo y Perfil */}
         <div className="user-profile-menu">
           <button
             className="user-badge-btn"
@@ -134,7 +134,7 @@ export default function Navbar({
                     <img src={u.avatar} alt={u.name} />
                     <div style={{ textAlign: 'left' }}>
                       <p className="u-name">{u.name}</p>
-                      <small className="u-sub">{u.username} • {u.role}</small>
+                      <small className="u-sub">{u.username} • {u.role === 'ADMIN' ? 'Administrador' : 'Aficionado'}</small>
                     </div>
                   </button>
                 ))}

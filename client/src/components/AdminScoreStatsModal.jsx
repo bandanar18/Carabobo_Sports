@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Trophy, Save, Edit3, Activity } from 'lucide-react';
+import { X, Save, Edit3 } from 'lucide-react';
 import WhistleLogo from './WhistleLogo';
 
 export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
@@ -11,9 +11,9 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
     event.playerStats && event.playerStats.length > 0
       ? event.playerStats.map(p => ({ ...p }))
       : [
-          { id: '1', name: 'Player A', position: 'Base', points: 12, assists: 3, fouls: 1 },
-          { id: '2', name: 'Player B', position: 'Escolta', points: 10, assists: 4, fouls: 0 },
-          { id: '3', name: 'Player C', position: 'Alero', points: 10, assists: 5, fouls: 0 }
+          { id: '1', name: 'Jugador A', position: 'Base', points: 12, assists: 3, fouls: 1 },
+          { id: '2', name: 'Jugador B', position: 'Escolta', points: 10, assists: 4, fouls: 0 },
+          { id: '3', name: 'Jugador C', position: 'Alero', points: 10, assists: 5, fouls: 0 }
         ]
   );
   const [isSaving, setIsSaving] = useState(false);
@@ -44,13 +44,13 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
   return (
     <div className="modal-backdrop">
       <div className="score-stats-modal-card">
-        {/* Header */}
+        {/* Cabecera */}
         <div className="modal-top-bar">
           <div className="brand-group">
-            <WhistleLogo size={22} />
+            <WhistleLogo size={22} customText="Carabobo Sports" />
             <div>
-              <h3>Carga de Resultados y Estadísticas (Admin)</h3>
-              <p>Actualiza el resultado y estadísticas en tiempo real</p>
+              <h3>Carga de Resultados y Estadísticas</h3>
+              <p>Actualiza el marcador y estadísticas en tiempo real</p>
             </div>
           </div>
           <button className="close-btn-circle" onClick={onClose}>
@@ -59,16 +59,16 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
         </div>
 
         <form onSubmit={handleSubmit} className="score-stats-form">
-          {/* Match Identifier */}
+          {/* Identificador del Partido */}
           <div className="match-identifier-badge">
             <span className="sport-tag">{event.sport.toUpperCase()}</span>
             <h4>{event.teamA} vs {event.teamB}</h4>
             <small>{event.venue} • {event.date}</small>
           </div>
 
-          {/* ACTUALIZAR EL PARTIDO */}
+          {/* ACTUALIZAR MARCADOR */}
           <div className="form-section-block">
-            <label className="section-label">ACTUALIZAR EL PARTIDO (MARCADOR)</label>
+            <label className="section-label">ACTUALIZAR MARCADOR DEL ENCUENTRO</label>
             <div className="score-inputs-pair">
               <div className="team-score-input-col">
                 <label>{event.teamA}</label>
@@ -102,7 +102,7 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
             </div>
           </div>
 
-          {/* POSSESSION & GAME TIME */}
+          {/* POSESIÓN Y ESTADO */}
           <div className="form-section-block">
             <label className="section-label">POSESIÓN Y TIEMPO DE JUEGO</label>
             <div className="possession-inputs-row">
@@ -117,7 +117,7 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
                 />
               </div>
               <div className="possession-cell">
-                <label>Tiempo / Estado:</label>
+                <label>Tiempo o Estado:</label>
                 <input
                   type="text"
                   placeholder="ej. 4to Cuarto - 02:45 / Finalizado"
@@ -130,7 +130,7 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
 
           {/* ACTUALIZAR JUGADORES */}
           <div className="form-section-block">
-            <label className="section-label">ACTUALIZAR ESTADÍSTICAS DE JUGADORES</label>
+            <label className="section-label">ACTUALIZAR ESTADÍSTICAS POR JUGADOR</label>
             <div className="players-editor-table-wrapper">
               <table className="players-editor-table">
                 <thead>
@@ -169,14 +169,14 @@ export default function AdminScoreStatsModal({ event, onClose, onSaveScores }) {
             </div>
           </div>
 
-          {/* ACTIONS */}
+          {/* BOTÓN DE GUARDADO */}
           <div className="modal-actions-col">
             <button
               type="submit"
               className="btn-save-score"
               disabled={isSaving}
             >
-              <Save size={16} /> {isSaving ? 'GUARDANDO...' : 'GUARDAR MARCADOR'}
+              <Save size={16} /> {isSaving ? 'GUARDANDO...' : 'GUARDAR MARCADOR Y ESTADÍSTICAS'}
             </button>
           </div>
         </form>

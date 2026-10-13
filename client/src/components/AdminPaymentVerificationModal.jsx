@@ -43,13 +43,13 @@ export default function AdminPaymentVerificationModal({
   return (
     <div className="modal-backdrop">
       <div className="payment-verification-container">
-        {/* Top Bar */}
+        {/* Barra Superior */}
         <div className="audit-top-bar">
           <div className="brand-group">
-            <WhistleLogo size={24} />
+            <WhistleLogo size={24} customText="Carabobo Sports" />
             <div>
-              <h3>Resumen Ejecutivo - Verificación de Pagos</h3>
-              <p>Pending Payments: <strong>[{pendingPayments.length}]</strong></p>
+              <h3>Resumen Ejecutivo — Verificación de Pagos</h3>
+              <p>Pagos Pendientes: <strong>[{pendingPayments.length}]</strong></p>
             </div>
           </div>
           <button className="close-btn-circle" onClick={onClose}>
@@ -64,7 +64,7 @@ export default function AdminPaymentVerificationModal({
         )}
 
         <div className="audit-split-layout">
-          {/* Left / Background Table List of Payments */}
+          {/* Listado de Pagos Recibidos (Sidebar Izquierdo) */}
           <div className="payments-list-sidebar">
             <div className="list-header">
               <span>SOLICITUDES DE PAGO RECIBIDAS</span>
@@ -113,11 +113,11 @@ export default function AdminPaymentVerificationModal({
             </div>
           </div>
 
-          {/* Right / Center Detailed Audit Card (Matches the prominent modal in Screenshot 190414) */}
+          {/* Tarjeta de Inspección y Auditoría */}
           <div className="payment-inspect-card">
             {selectedPayment ? (
               <div>
-                {/* User Header */}
+                {/* Cabecera del Usuario */}
                 <div className="inspect-user-header">
                   <div className="user-profile-meta">
                     <img
@@ -127,7 +127,7 @@ export default function AdminPaymentVerificationModal({
                     />
                     <div>
                       <h4>{selectedPayment.userName}</h4>
-                      <p className="handle-link">Perfil Usuario: {selectedPayment.userHandle}</p>
+                      <p className="handle-link">Perfil de Usuario: {selectedPayment.userHandle}</p>
                     </div>
                   </div>
                   <div className="order-id-badge">
@@ -137,7 +137,7 @@ export default function AdminPaymentVerificationModal({
                 </div>
 
                 <div className="inspect-content-grid">
-                  {/* Receipt Preview Box */}
+                  {/* Visor de Comprobante Adjunto */}
                   <div className="receipt-preview-box">
                     <div className="box-title-row">
                       <label>Comprobante de Pago Adjunto</label>
@@ -165,26 +165,26 @@ export default function AdminPaymentVerificationModal({
                         />
                       )}
                     </div>
-                    <small className="receipt-hint">Comprobante de transferencia oficial adjuntado por el aficionado.</small>
+                    <small className="receipt-hint">Comprobante de transferencia bancaria oficial adjuntado por el aficionado.</small>
                   </div>
 
-                  {/* Payment Details & Explanation */}
+                  {/* Detalles y Explicación del Pago */}
                   <div className="payment-details-box">
                     <div className="explanation-section">
-                      <label>Explicación del Pago (Payment Explanation):</label>
+                      <label>Explicación del Pago:</label>
                       <div className="explanation-bubble">
                         "{selectedPayment.paymentExplanation || 'Transferencia bancaria directa - Banco Banesco'}"
                       </div>
                     </div>
 
                     <div className="tier-details-section">
-                      <label>Detalles del Nivel de Entrada (Ticket Tier Details):</label>
+                      <label>Detalles de Entradas Solicitadas:</label>
                       <table className="tier-breakdown-table">
                         <thead>
                           <tr>
-                            <th>Nivel (Tier)</th>
-                            <th>Precio (Price)</th>
-                            <th>Cantidad (Qty)</th>
+                            <th>Nivel / Zona</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -201,7 +201,7 @@ export default function AdminPaymentVerificationModal({
                       </div>
                     </div>
 
-                    {/* Rejection input toggle */}
+                    {/* Despliegue de Motivo de Rechazo */}
                     {showRejectInput && (
                       <div className="reject-reason-box">
                         <label>Motivo del Rechazo:</label>
@@ -222,23 +222,23 @@ export default function AdminPaymentVerificationModal({
                       </div>
                     )}
 
-                    {/* Actions Row (Screenshot 190414) */}
+                    {/* Botones de Acción */}
                     <div className="audit-actions-row">
-                      <label className="actions-title">Acciones (Actions):</label>
+                      <label className="actions-title">Acciones de Auditoría:</label>
                       <div className="buttons-group">
                         <button
                           className="btn-approve"
                           onClick={handleApprove}
                           disabled={selectedPayment.status === 'CONFIRMADO'}
                         >
-                          <CheckCircle2 size={16} /> APROBAR (Approve)
+                          <CheckCircle2 size={16} /> APROBAR PAGO
                         </button>
                         <button
                           className="btn-reject"
                           onClick={() => setShowRejectInput(true)}
                           disabled={selectedPayment.status === 'RECHAZADO'}
                         >
-                          <XCircle size={16} /> RECHAZAR (Reject)
+                          <XCircle size={16} /> RECHAZAR PAGO
                         </button>
                       </div>
                     </div>

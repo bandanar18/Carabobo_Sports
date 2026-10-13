@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { ArrowLeft, Clock, MapPin, Calendar, Ticket, Trophy, Activity, Shield } from 'lucide-react';
 
 export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
-  const [positionFilter, setPositionFilter] = useState('ALL');
-
   if (!event) {
     return (
       <div className="container" style={{ padding: '40px 0', textAlign: 'center' }}>
@@ -20,17 +18,17 @@ export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
   const foulsA = event.teamStats?.foulsA || 6;
   const foulsB = event.teamStats?.foulsB || 9;
 
-  // Circumference calculation for donut chart
+  // Cálculo de circunferencia para el gráfico donut
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (possessionA / 100) * circumference;
 
   const players = event.playerStats && event.playerStats.length > 0 ? event.playerStats : [
-    { id: '1', name: 'Player A', team: event.teamA, position: 'Base / Alero', points: 13, assists: 1, goals: 3, yellowCards: 1, redCards: 0, fouls: 2 },
-    { id: '2', name: 'Player B', team: event.teamA, position: 'Escolta', points: 10, assists: 1, goals: 2, yellowCards: 0, redCards: 0, fouls: 1 },
-    { id: '3', name: 'Player C', team: event.teamA, position: 'Alero', points: 8, assists: 0, goals: 0, yellowCards: 0, redCards: 0, fouls: 3 },
-    { id: '4', name: 'Player D', team: event.teamB, position: 'Pívot', points: 5, assists: 0, goals: 0, yellowCards: 0, redCards: 0, fouls: 2 },
-    { id: '5', name: 'Player E', team: event.teamB, position: 'Base', points: 3, assists: 0, goals: 0, yellowCards: 0, redCards: 0, fouls: 4 }
+    { id: '1', name: 'Jugador A', team: event.teamA, position: 'Base / Alero', points: 13, assists: 1, goals: 3, yellowCards: 1, redCards: 0, fouls: 2 },
+    { id: '2', name: 'Jugador B', team: event.teamA, position: 'Escolta', points: 10, assists: 1, goals: 2, yellowCards: 0, redCards: 0, fouls: 1 },
+    { id: '3', name: 'Jugador C', team: event.teamA, position: 'Alero', points: 8, assists: 0, goals: 0, yellowCards: 0, redCards: 0, fouls: 3 },
+    { id: '4', name: 'Jugador D', team: event.teamB, position: 'Pívot', points: 5, assists: 0, goals: 0, yellowCards: 0, redCards: 0, fouls: 2 },
+    { id: '5', name: 'Jugador E', team: event.teamB, position: 'Base', points: 3, assists: 0, goals: 0, yellowCards: 0, redCards: 0, fouls: 4 }
   ];
 
   return (
@@ -39,11 +37,11 @@ export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
         <ArrowLeft size={16} /> Volver a Lista de Eventos
       </button>
 
-      {/* Scoreboard Banner */}
+      {/* Banner de Marcador */}
       <div className="scoreboard-banner-card">
         <div className="scoreboard-header-tag">
           <span className="live-dot"></span>
-          <span>LIVE SCOREBOARD • LR LIVE</span>
+          <span>MARCADOR EN VIVO • TIEMPO REAL</span>
         </div>
 
         <div className="scoreboard-matchup">
@@ -66,28 +64,28 @@ export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
         </div>
 
         <div className="scoreboard-footer-meta">
-          <span><MapPin size={14} /> {event.venue}</span>
+          <span><MapPin size={14} /> Sede: {event.venue}</span>
           <span><Calendar size={14} /> {event.date} • {event.time}</span>
-          <span><Trophy size={14} /> Torneo Oficial CaraboboSports</span>
+          <span><Trophy size={14} /> Torneo Oficial Carabobo Sports</span>
         </div>
 
         <div className="scoreboard-cta-box">
           <button className="btn-reserve-primary" onClick={() => onOpenBookModal(event)}>
-            <Ticket size={18} /> RESERVAR ENTRADA PARA ESTE PARTIDO
+            <Ticket size={18} /> RESERVAR ENTRADA PARA ESTE ENCUENTRO
           </button>
         </div>
       </div>
 
-      {/* Statistics Section */}
+      {/* Sección de Estadísticas */}
       <div className="stats-dashboard-grid">
-        {/* TEAM STATS */}
+        {/* ESTADÍSTICAS DEL PARTIDO */}
         <div className="stats-box-card">
           <div className="stats-box-header">
-            <h3>TEAM STATS</h3>
+            <h3>ESTADÍSTICAS DEL PARTIDO</h3>
             <span className="sport-badge-tag">{event.sport.toUpperCase()}</span>
           </div>
 
-          {/* Possession Donut */}
+          {/* Donut de Posesión */}
           <div className="possession-chart-block">
             <h4>Posesión de Balón</h4>
             <div className="donut-chart-wrapper">
@@ -126,10 +124,10 @@ export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
             </div>
           </div>
 
-          {/* Comparison bars */}
+          {/* Barras Comparativas */}
           <div className="comparative-stat-row">
             <div className="stat-label-bar">
-              <span>Shots on Target / Tiros al Arco</span>
+              <span>Tiros al Arco / Intentos de Campo</span>
               <div className="bar-numbers">
                 <strong>{shotsA}</strong> vs <strong>{shotsB}</strong>
               </div>
@@ -148,7 +146,7 @@ export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
 
           <div className="comparative-stat-row">
             <div className="stat-label-bar">
-              <span>Fouls / Faltas Cometidas</span>
+              <span>Faltas Cometidas</span>
               <div className="bar-numbers">
                 <strong>{foulsA}</strong> vs <strong>{foulsB}</strong>
               </div>
@@ -166,12 +164,12 @@ export default function EventDetailsView({ event, onBack, onOpenBookModal }) {
           </div>
         </div>
 
-        {/* PLAYER STATS */}
+        {/* ESTADÍSTICAS DE JUGADORES */}
         <div className="stats-box-card wide">
           <div className="stats-box-header">
-            <h3>PLAYER STATS</h3>
+            <h3>ESTADÍSTICAS DE JUGADORES</h3>
             <div className="table-controls-inline">
-              <span className="control-label">Tabla Dinámica</span>
+              <span className="control-label">Rendimiento Individual</span>
             </div>
           </div>
 

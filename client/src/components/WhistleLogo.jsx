@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function WhistleLogo({ size = 32, showText = true, textColor = '#FFFFFF', dark = false }) {
+export default function WhistleLogo({ size = 32, showText = true, textColor = '#FFFFFF', dark = false, customText = 'Carabobo Sports' }) {
   return (
     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', userSelect: 'none' }}>
       <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -25,13 +25,13 @@ export default function WhistleLogo({ size = 32, showText = true, textColor = '#
           style={{
             fontFamily: 'var(--font-heading)',
             fontWeight: 800,
-            fontSize: size * 0.7,
-            letterSpacing: '0.04em',
+            fontSize: size * 0.65,
+            letterSpacing: '0.02em',
             color: dark ? '#0B1E36' : textColor,
             lineHeight: 1
           }}
         >
-          SPORT-FLOW
+          {customText}
         </span>
       )}
     </div>

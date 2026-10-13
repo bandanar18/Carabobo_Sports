@@ -13,16 +13,16 @@ export default function UserDashboardView({
 
   const sportsList = [
     { id: 'all', name: 'Todos', icon: '🏆' },
-    { id: 'basketball', name: 'Basketball', icon: '🏀' },
-    { id: 'soccer', name: 'Football', icon: '⚽' },
-    { id: 'volleyball', name: 'Volleyball', icon: '🏐' },
-    { id: 'baseball', name: 'Baseball', icon: '⚾' },
-    { id: 'running', name: 'Running', icon: '🏃' },
-    { id: 'swimming', name: 'Swimming', icon: '🏊' },
-    { id: 'tennis', name: 'Tennis', icon: '🎾' }
+    { id: 'basketball', name: 'Baloncesto', icon: '🏀' },
+    { id: 'soccer', name: 'Fútbol', icon: '⚽' },
+    { id: 'volleyball', name: 'Voleibol', icon: '🏐' },
+    { id: 'baseball', name: 'Béisbol', icon: '⚾' },
+    { id: 'running', name: 'Atletismo', icon: '🏃' },
+    { id: 'swimming', name: 'Natación', icon: '🏊' },
+    { id: 'tennis', name: 'Tenis', icon: '🎾' }
   ];
 
-  // Filter events
+  // Filtrado de eventos
   const filteredEvents = events.filter(evt => {
     const matchesSport = selectedSport === 'all' || evt.sport.toLowerCase() === selectedSport.toLowerCase();
     const matchesSearch = !searchTerm || 
@@ -38,8 +38,8 @@ export default function UserDashboardView({
 
   return (
     <div className="event-dashboard-container container">
-      {/* Sidebar / Top Sports Filter Tabs */}
       <div className="dashboard-layout">
+        {/* Barra Lateral de Disciplinas */}
         <aside className="sports-sidebar">
           <div className="sidebar-title">
             <span>DISCIPLINAS</span>
@@ -59,17 +59,17 @@ export default function UserDashboardView({
 
           <div className="sidebar-promo-card">
             <WhistleLogo size={28} showText={false} />
-            <p><strong>CaraboboSports</strong></p>
-            <small>Plataforma unificada de gestión deportiva regional.</small>
+            <p><strong>Carabobo Sports</strong></p>
+            <small>Plataforma unificada de gestión deportiva regional de Carabobo.</small>
           </div>
         </aside>
 
-        {/* Main Content Area */}
+        {/* Área Principal de Contenido */}
         <main className="dashboard-main-content">
           <div className="dashboard-content-header">
             <div>
-              <h1 className="content-heading">UPCOMING & LIVE EVENTS</h1>
-              <p className="content-subheading">Sigue los partidos de Carabobo y asegura tu entrada digital</p>
+              <h1 className="content-heading">EVENTOS EN VIVO Y PRÓXIMOS</h1>
+              <p className="content-subheading">Sigue los partidos de Carabobo y asegura tu entrada digital oficial</p>
             </div>
 
             <div className="search-filter-input">
@@ -83,12 +83,12 @@ export default function UserDashboardView({
             </div>
           </div>
 
-          {/* SECTION: LIVE NOW */}
+          {/* SECCIÓN: EN VIVO AHORA */}
           <section className="events-sub-section">
             <div className="section-title-row">
               <div className="live-header-pill">
                 <span className="live-dot"></span>
-                <span>LIVE NOW</span>
+                <span>EN VIVO AHORA</span>
               </div>
             </div>
 
@@ -103,7 +103,7 @@ export default function UserDashboardView({
                     <div className="live-banner-left">
                       <div className="live-badge-tag">
                         <span className="live-dot"></span>
-                        LIVE NOW
+                        EN VIVO AHORA
                       </div>
 
                       <div className="live-teams-display">
@@ -161,9 +161,9 @@ export default function UserDashboardView({
             )}
           </section>
 
-          {/* SECTION: UPCOMING EVENTS */}
+          {/* SECCIÓN: PRÓXIMOS EVENTOS */}
           <section className="events-sub-section">
-            <h2 className="section-title">UPCOMING EVENTS</h2>
+            <h2 className="section-title">PRÓXIMOS EVENTOS</h2>
 
             {upcomingEvents.length === 0 ? (
               <div className="empty-state-card">
@@ -174,7 +174,7 @@ export default function UserDashboardView({
                 {upcomingEvents.map(event => (
                   <div key={event.id} className="upcoming-match-card">
                     <div className="card-top-tag">
-                      <span className="scheduled-label">SCHEDULED</span>
+                      <span className="scheduled-label">PROGRAMADO</span>
                       <span className="scheduled-date">{event.date}</span>
                     </div>
 

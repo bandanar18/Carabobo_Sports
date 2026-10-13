@@ -50,18 +50,18 @@ export default function AdminExecutiveDashboard({
 
   return (
     <div className="admin-dashboard-wrapper container">
-      {/* Executive Header Banner */}
+      {/* Cabecera Ejecutiva */}
       <div className="executive-header-box">
         <div className="title-area">
           <div className="brand-badge-row">
-            <span className="carabobo-pill">CaraboboSports Admin</span>
+            <span className="carabobo-pill">Carabobo Sports Admin</span>
             <span className="live-pill"><span className="live-dot"></span> Modo Gestión Activo</span>
           </div>
           <h1>Resumen Ejecutivo</h1>
           <p>Métricas en tiempo real y gestión general de torneos deportivos en Carabobo</p>
         </div>
 
-        {/* Action Buttons Top Bar */}
+        {/* Barra de Acciones Principales */}
         <div className="executive-actions-bar">
           <button className="btn-admin-action primary-blue" onClick={onOpenCreateEvent}>
             <Plus size={16} /> Crear Nuevo Evento
@@ -75,7 +75,7 @@ export default function AdminExecutiveDashboard({
         </div>
       </div>
 
-      {/* Secondary Navigation for Detailed Views */}
+      {/* Accesos Directos a Vistas Detalladas */}
       <div className="admin-nav-shortcuts">
         <button className="shortcut-btn" onClick={onNavigateToAllEvents}>
           <Calendar size={15} /> Ver Listado Detallado de Eventos ({events.length}) &gt;
@@ -88,7 +88,7 @@ export default function AdminExecutiveDashboard({
         </button>
       </div>
 
-      {/* Filter by Sport Header */}
+      {/* Barra de Filtro por Deporte */}
       <div className="filter-sport-bar">
         <div className="filter-label-group">
           <span className="target-icon">🎯</span>
@@ -109,7 +109,7 @@ export default function AdminExecutiveDashboard({
         </select>
       </div>
 
-      {/* KPI Cards Grid (Screenshot 190243) */}
+      {/* Tarjetas de Indicadores Clave (KPIs) */}
       <div className="kpis-grid">
         <div className="kpi-card">
           <div className="kpi-content">
@@ -125,7 +125,7 @@ export default function AdminExecutiveDashboard({
           <div className="kpi-content">
             <span className="kpi-label">PAGOS PENDIENTES</span>
             <h2 className="kpi-value warning">{kpis?.pendingPayments ?? 0}</h2>
-            <small className="kpi-alert-hint">Haga clic para verificar comprobantes</small>
+            <small className="kpi-alert-hint">Haga clic para auditar comprobantes</small>
           </div>
           <div className="kpi-icon-box amber">
             <Hourglass size={24} />
@@ -153,7 +153,7 @@ export default function AdminExecutiveDashboard({
         </div>
       </div>
 
-      {/* Programmed Events Table */}
+      {/* Tabla de Eventos Programados */}
       <div className="admin-table-panel">
         <div className="table-panel-header">
           <div>
@@ -173,7 +173,7 @@ export default function AdminExecutiveDashboard({
                 <th>Deporte</th>
                 <th>Nombre del Evento</th>
                 <th>Equipos / Rivales</th>
-                <th>Lugar (Venue)</th>
+                <th>Lugar (Sede)</th>
                 <th>Acciones</th>
               </tr>
             </thead>
